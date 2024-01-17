@@ -1,0 +1,39 @@
+pipeline:
+  name: GO Application
+  identifier: GO_Application
+  projectIdentifier: SE_Demo
+  orgIdentifier: Jesse_Test
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: Jesse_Repo
+        repoName: golang/helloserver
+        build: <+input>
+  stages:
+    - stage:
+        name: BuildGo
+        identifier: BuildGo
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          infrastructure:
+            type: KubernetesDirect
+            spec:
+              connectorRef: Minikube
+              namespace: builds
+              automountServiceAccountToken: true
+              nodeSelector: {}
+              os: Linux
+          execution:
+            steps:
+              - step:
+                  type: BuildAndPushDockerRegistry
+                  name: BuildAndPushDockerRegistry_1
+                  identifier: BuildAndPushDockerRegistry_1
+                  spec:
+                    connectorRef: Local_Docker
+                    repo: gobuild
+                    tags:
+                      - stable
